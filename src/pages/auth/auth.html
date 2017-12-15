@@ -1,0 +1,62 @@
+<ion-content padding>
+  <ion-grid>
+  <ion-row>
+    <ion-col col-12 text-center>
+      <div padding>
+        <h1><ion-icon ios="ios-outline-planet"></ion-icon>Sky Chat</h1>
+        <p>Login to join chatting</p>
+        </div>
+    </ion-col>
+  </ion-row>
+  
+  <ion-row>
+    <ion-col col-12 col-lg-6 offset-lg-3 text-center>
+      <ion-list>
+        <ion-item>
+          <ion-label floating>Username</ion-label>
+          <ion-input [(ngModel)]="username" type="text" value=""></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label floating>Password</ion-label>
+          <ion-input [(ngModel)]="password"  type="password" value=""></ion-input>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+  
+  <section *ngIf="mode=='signin'">
+  <ion-row>
+    <ion-col col-12 text-center>
+      <div padding>
+        <button ion-button (click)="login()" class="login">Sign In</button>
+      </div>
+    </ion-col>
+  </ion-row>
+    <ion-row>
+    <ion-col col-12 text-center>
+      <div padding>
+        <button ion-button clear class="signup-hint" (click)="switchToSignup()">No account? Signup now.</button>
+      </div>
+    </ion-col>
+  </ion-row>
+  </section>
+
+  <section *ngIf="mode=='signup'">
+  <ion-row>
+    <ion-col col-12 text-center>
+      <div padding>
+        <button ion-button (click)="signup()" class="signup">Sign up</button>
+      </div>
+    </ion-col>
+  </ion-row>
+    <ion-row>
+    <ion-col col-12 text-center>
+      <div padding>
+        <button ion-button class="login-hint" clear (click)="switchToSignin()">Login with existing account.</button>
+      </div>
+    </ion-col>
+  </ion-row>
+  </section>
+
+</ion-grid>
+</ion-content>

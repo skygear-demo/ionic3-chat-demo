@@ -1,17 +1,22 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Contact
+      Channels
     </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="openSettings()">
+        <ion-icon name="more"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content>
   <ion-list>
-    <ion-list-header>Follow us on Twitter</ion-list-header>
-    <ion-item>
-      <ion-icon name="ionic" item-start></ion-icon>
-      @ionicframework
+    <ion-list-header>Join any public channels by room invitation key. <button>Scan barcode</button> <button>Enter manually</button></ion-list-header>
+    <ion-item (click)="join()">
+      <ion-icon name="globe" item-start></ion-icon>
+      @skygear
     </ion-item>
   </ion-list>
 </ion-content>
