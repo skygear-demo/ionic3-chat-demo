@@ -1,0 +1,26 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Products
+    </ion-title>
+    <ion-buttons end>
+      <button ion-button icon-only (click)="openSettings()">
+        <ion-icon name="more"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item *ngFor="let product of productList">
+      <ion-thumbnail item-start>
+        <img src="{{product.photoURL}}">
+      </ion-thumbnail>
+      {{product.name}}
+      <button ion-button item-end (click)="message(product.author, product)">
+        <ion-icon name="ios-chatbubbles" item-start></ion-icon> Owner
+      </button>
+    </ion-item>
+  </ion-list>
+</ion-content>

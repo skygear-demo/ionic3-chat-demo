@@ -13,7 +13,11 @@ export class HomePage {
   constructor(public navCtrl: NavController,
     public modalCtrl:ModalController,
     private conversations:Conversations) {
-    this.conversations.getConversationList();
+    this.conversations.getConversationList().then((conversations) => {
+      this.myConversations = conversations;
+    }).catch(error => {
+      console.log("Couldn't load conversations");
+    });
   }
 
   openSettings() {

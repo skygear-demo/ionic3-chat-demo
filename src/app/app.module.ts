@@ -1,4 +1,4 @@
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler,CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
@@ -8,12 +8,14 @@ import { ContactPage } from '../pages/contact/contact';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 import { SettingsPage } from '../pages/settings/settings';
+import { ProductPage } from '../pages/product/product';
+import { ChatroomPage } from '../pages/chatroom/chatroom';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { SkygearService } from './skygear.service';
 
-import { User, Conversations } from '../providers/providers';
+import { User, Conversations, Products, Messages, Emoji } from '../providers/providers';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,9 @@ import { User, Conversations } from '../providers/providers';
     ContactPage,
     HomePage,
     TabsPage,
-    SettingsPage
+    SettingsPage,
+    ProductPage,
+    ChatroomPage
   ],
   imports: [
     BrowserModule,
@@ -35,15 +39,21 @@ import { User, Conversations } from '../providers/providers';
     ContactPage,
     HomePage,
     TabsPage,
-    SettingsPage
+    SettingsPage,
+    ProductPage,
+    ChatroomPage
   ],
   providers: [
     User,
     Conversations,
+    Products,
+    Messages,
+    Emoji,
     StatusBar,
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     SkygearService
-  ]
+  ],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class AppModule {}

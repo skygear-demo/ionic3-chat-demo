@@ -33,10 +33,13 @@ export class SkygearService {
     if (this.isConfigurated) {
       console.log("Configed");
       console.log(skygearchat);
+      skygearchat.skygear = skygear;
+
       return Promise.resolve(skygearchat);
     } else {
       let promise = new Promise(resolve => {
         this.configSkygear().then(skygear => {
+          skygearchat.skygear = skygear; 
           resolve(skygearchat);
         });
       });

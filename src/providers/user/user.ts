@@ -94,5 +94,24 @@ export class User {
       return skygearPromise;
   }
 
+  // General user helper
+
+  getUserProfile(userId) {
+    return new Promise((resolve, reject) => {
+      this.skygearService.getSkygear().then(skygear => {
+        const query = new skygear.Query(skygear.UserRecord);
+        query.equalTo('_id', userId);
+        skygear.publicDB.query(query).then((records) => {
+          const record = records[0];
+          console.log(record);
+          resolve(record);
+        }, (error) => {
+          console.error(error);
+          reject(error);
+        });
+      });
+    });
+  }
+
 
 }
