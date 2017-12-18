@@ -15,7 +15,7 @@ import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { SkygearService } from './skygear.service';
 
-import { User, Conversations, Products, Messages, Emoji } from '../providers/providers';
+import { User, Conversations, Products, Emoji } from '../providers/providers';
 
 @NgModule({
   declarations: [
@@ -47,7 +47,6 @@ import { User, Conversations, Products, Messages, Emoji } from '../providers/pro
     User,
     Conversations,
     Products,
-    Messages,
     Emoji,
     StatusBar,
     SplashScreen,

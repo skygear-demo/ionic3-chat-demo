@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { IonicPage } from 'ionic-angular';
 import { Events, Content, TextInput } from 'ionic-angular';
-import { Products, Conversations, Messages, User } from '../../providers/providers';
+import { Products, Conversations, User } from '../../providers/providers';
 
 @Component({
   selector: 'page-chatroom',
@@ -21,7 +21,6 @@ export class ChatroomPage {
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public conversations: Conversations,
-    public messages: Messages,
     public user: User) {
 
       this.conversation = navParams.get('conversation');
