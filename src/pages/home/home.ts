@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
-import { NavController, ModalController } from 'ionic-angular';
+import { App, NavController, ModalController } from 'ionic-angular';
 import { SettingsPage } from '../settings/settings';
+import { ChatroomPage } from '../chatroom/chatroom';
 import { Conversations } from '../../providers/providers';
 
 @Component({
@@ -11,8 +12,9 @@ export class HomePage {
   myConversations;
 
   constructor(public navCtrl: NavController,
-    public modalCtrl:ModalController,
-    private conversations:Conversations) {
+    public modalCtrl: ModalController,
+    private conversations: Conversations,
+    private app: App) {
     this.conversations.getConversationList().then((conversations) => {
       this.myConversations = conversations;
     }).catch(error => {
@@ -27,6 +29,10 @@ export class HomePage {
   presentSettingsModal() {
     let settingsModal = this.modalCtrl.create(SettingsPage);
     settingsModal.present();
+  }
+
+  openConversation(conversation) {
+    this.app.getRootNav().push(ChatroomPage, {conversation: conversation});
   }
 
 }

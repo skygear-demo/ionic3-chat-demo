@@ -1,6 +1,9 @@
+/* Conversations - for all chat operations */
+
 import 'rxjs/add/operator/toPromise';
 import { Injectable } from '@angular/core';
 import { Conversation } from '../../models/conversation';
+import { Message } from '../../models/message';
 
 import {
   SkygearService, SkygearConversation
@@ -14,6 +17,8 @@ export class Conversations {
   constructor(
     private skygearService: SkygearService) { 
   }
+
+  /* Conversations */
 
   getConversationList() {
     return new Promise((resolve,reject) => {
@@ -33,7 +38,6 @@ export class Conversations {
 
   createConversation(userID) {
     return new Promise((resolve,reject) => {
-
       console.log('creating conversation');
       this.skygearService.getSkygearChat().then(skygearchat => {
         console.log(skygearchat);
@@ -65,6 +69,83 @@ export class Conversations {
         skygearchat.getConversation(conversation, true).then((result) => { 
           resolve(result);
         }).catch((error) => {
+          reject(error);
+        });
+      });
+    });
+  }
+
+  convertMessage(msg) {
+    var message = new Message({});
+    message.message = msg.body;
+    message.time = msg.createdAt;
+    message.id = msg._id;
+    message.sender = msg.ownerID;
+
+    return message;
+  }
+
+  /* Messages */
+  parseMessages(messages) {
+    var result = [];
+    for (var i in messages) {
+      var message = this.convertMessage(messages[i])
+      
+      if(!messages[i].deleted) {
+        result.unshift(message);
+      }
+    }
+    return result;
+  }
+
+  getMessages(conversation) { 
+    let _me = this;
+    return new Promise((resolve, reject) => {
+      this.skygearService.getSkygearChat().then(skygearchat => {
+
+        const LIMIT = 999;
+        const currentTime = new Date();
+        skygearchat.getMessages(conversation, LIMIT, currentTime)
+          .then(function (messages) {
+            let lastMsgTime;
+            messages.forEach(function (m) {
+
+              console.log("messages", m);
+              // const liNode = document.createElement('LI');
+              // liNode.appendChild(document.createTextNode(m.content));
+              // ulNode.appendChild(liNode);
+              // lastMsgTime = m.createAt;
+
+            });
+            console.log(_me);
+            var parsedMessages = _me.parseMessages(messages);
+            resolve(parsedMessages);
+            // Querying next page
+            // skygearChat.getMessages(conversation, 10, lastMsgTime).then();
+          }, function (error) {
+            console.log('Error: ', error);
+            reject(error);
+          });
+
+
+      });
+    });
+  }
+
+  addMessageInConversation(conversation, message, arg, file) {
+    let _me = this;
+    return new Promise((resolve, reject) => {
+      this.skygearService.getSkygearChat().then(skygearchat => {
+        skygearchat.createMessage(
+          conversation,
+          message,
+          arg,
+          file
+        ).then(function (result) {
+          console.log('Save success', result);
+          resolve(_me.convertMessage(result));
+        }).catch((error)=> {
+          console.log('Error', error);
           reject(error);
         });
       });

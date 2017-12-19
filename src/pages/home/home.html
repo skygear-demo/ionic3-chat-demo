@@ -11,4 +11,9 @@
 </ion-header>
 
 <ion-content padding>
+  <ion-list>
+    <ion-item *ngFor="let conversation of myConversations" (click)="openConversation(conversation)">
+      {{conversation.id}}
+    </ion-item>
+  </ion-list>
 </ion-content>

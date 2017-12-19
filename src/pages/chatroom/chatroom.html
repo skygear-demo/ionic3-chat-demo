@@ -13,14 +13,14 @@
     <div class="message-wrap">
         <div *ngFor="let msg of msgList"
              class="message"
-             [class.left]=" msg.userId === toUser.id "
-             [class.right]=" msg.userId === user.id ">
+             [class.left]=" msg.sender !== userId "
+             [class.right]=" msg.sender === userId ">
             <img class="user-img" [src]="msg.userAvatar" alt="" src="">
             <ion-spinner name="dots" *ngIf="msg.status === 'pending'"></ion-spinner>
             <div class="msg-detail">
                 <div class="msg-info">
                     <p>
-                        <!-- {{msg.userName}}&nbsp;&nbsp;&nbsp;{{msg.time | relativeTime}}</p> -->
+                        {{msg.userName}}&nbsp;&nbsp;&nbsp;{{msg.timeText()}}</p>
                 </div>
                 <div class="msg-content">
                     <span class="triangle"></span>

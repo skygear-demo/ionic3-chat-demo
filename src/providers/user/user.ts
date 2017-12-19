@@ -24,9 +24,8 @@ export class User {
         console.log(`Skygear Error`);
         reject(error);
       });
-
     });
-     return skygearPromise;
+    return skygearPromise;
   }
 
   signupSkygear(username, password) {

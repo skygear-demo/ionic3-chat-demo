@@ -11,13 +11,13 @@ import { Product } from '../../models/product'
   templateUrl: 'product.html'
 })
 export class ProductPage {
-
   productList;
 
   constructor(public navCtrl: NavController,
     private modalCtrl: ModalController,
     private products: Products,
-    private conversations:Conversations, private app: App) {
+    private conversations:Conversations, 
+    private app: App) {
   }
 
   ionViewDidLoad() {

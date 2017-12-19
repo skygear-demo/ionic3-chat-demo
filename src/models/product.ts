@@ -9,5 +9,4 @@ export class Product {
       this.photoURL = arg.photoURL;
       this.author = arg.author;
     }
-
 }
