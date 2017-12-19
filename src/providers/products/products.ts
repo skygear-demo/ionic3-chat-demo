@@ -28,6 +28,11 @@ export class Products {
         name:"Line Friends 陪你訓教攬枕",
         photoURL:"https://www.fetchawish.com/RESOURCES/FETCH/images/products/2017/2017HKdq0000006163wp.png",
         author: "6cc60d83-fd7b-4fd1-9696-dcdcab3e153f"
+      }),
+      new Product({
+        name:"AS 快眠枕 (peter)",
+        photoURL:"https://www.fetchawish.com/RESOURCES/FETCH/images/products/2017/2017HK9s00000060874i.png",
+        author: "e8c28138-8b9f-4323-855b-fc4d1083ec75"
       })
     ]
   }
