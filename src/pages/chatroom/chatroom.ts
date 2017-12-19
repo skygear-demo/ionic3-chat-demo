@@ -17,12 +17,10 @@ export class ChatroomPage {
   @ViewChild(Content) content: Content;
   @ViewChild('chat_input') messageInput: TextInput;
 
-  showEmojiPicker = false;
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public conversations: Conversations,
     public user: User) {
-
       this.conversation = navParams.get('conversation');
       this.productContext = navParams.get('product');
       this.title = this.conversation.title;
@@ -58,19 +56,8 @@ export class ChatroomPage {
 
   /* Chat input control */
   onFocus() {
-    this.showEmojiPicker = false;
     this.content.resize();
     this.scrollToBottom();
-  }
-
-  switchEmojiPicker() {
-    this.showEmojiPicker = !this.showEmojiPicker;
-    if (!this.showEmojiPicker) {
-      this.messageInput.setFocus();
-    }
-    this.content.resize();
-    this.scrollToBottom();
-
   }
 
   /* Message send / receive */
