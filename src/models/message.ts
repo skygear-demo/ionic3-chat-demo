@@ -22,11 +22,12 @@ export class Message {
     }
   }
 
-  timeText() {
+  timeText() { // You can customize your time text here.
     const year = this.time.getFullYear()
          ,month = this.time.getMonth() + 1
-         ,day = this.time.getDate()
-         ,formattedDate = [
+         ,day = this.time.getDate();
+
+    let formattedDate = [
             year
            ,month < 10 ? '0' + month : month
            ,day < 10 ? '0' + day : day

@@ -3,6 +3,7 @@ import { App, NavController, ModalController } from 'ionic-angular';
 import { SettingsPage } from '../settings/settings';
 import { ChatroomPage } from '../chatroom/chatroom';
 import { Conversations } from '../../providers/providers';
+import { Conversation } from '../../models/conversation'
 
 @Component({
   selector: 'page-home',
@@ -15,11 +16,7 @@ export class HomePage {
     public modalCtrl: ModalController,
     private conversations: Conversations,
     private app: App) {
-    this.conversations.getConversationList().then((conversations) => {
-      this.myConversations = conversations;
-    }).catch(error => {
-      console.log("Couldn't load conversations");
-    });
+    this.loadConversations();
   }
 
   openSettings() {
@@ -33,6 +30,25 @@ export class HomePage {
 
   openConversation(conversation) {
     this.app.getRootNav().push(ChatroomPage, {conversation: conversation});
+  }
+
+  loadConversations() {
+    this.conversations.getConversationList().then((conversations) => {
+      
+      this.myConversations = [];
+
+      conversations.forEach((skygearConversation) => {
+        this.conversations.getConversationTitle(skygearConversation).then(title => {
+          var mConversation = new Conversation();
+          mConversation.setFields(skygearConversation);
+          mConversation["title"] = title;
+          this.myConversations.push(mConversation);
+        });
+      })
+    }).catch(error => {
+      console.log(error);
+      console.log("Couldn't load conversations");
+    });
   }
 
 }

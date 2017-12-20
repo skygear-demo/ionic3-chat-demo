@@ -6,7 +6,7 @@ import { ProductPage } from '../product/product';
 import { ContactPage } from '../contact/contact';
 import { HomePage } from '../home/home';
 import { AuthPage } from '../auth/auth';
-import { User } from '../../providers/providers'
+import { Conversations, User } from '../../providers/providers'
 
 @Component({
   templateUrl: 'tabs.html'
@@ -16,10 +16,20 @@ export class TabsPage {
   productListRoot = ProductPage;
   directChatListRoot = HomePage;
   groupChatListRoot = ContactPage;
+  messageNotificationCount = 0;
 
   constructor(public navCtrl: NavController,
-   private user: User) {
+   private user: User,
+   private conversations: Conversations) {
 
+  }
+
+  ionViewWillEnter() {
+    this.user.getCurrentUser().then(result=>{
+      if(result) {
+        this.getUnreadCount();
+      }
+    });
   }
 
   ionViewDidLoad() {
@@ -35,6 +45,18 @@ export class TabsPage {
       this.navCtrl.setRoot(AuthPage);
       this.navCtrl.popToRoot();
       console.log(error);
+    });
+
+
+  }
+
+  getUnreadCount() {
+    this.messageNotificationCount = null;
+
+    this.conversations.getUnreadCount().then(result => {
+      var messageCount = result["message"];
+      var conversationCount = result["message"];
+      this.messageNotificationCount = result["message"];
     });
   }
 }

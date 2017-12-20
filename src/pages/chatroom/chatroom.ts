@@ -19,7 +19,9 @@ export class ChatroomPage {
 
   //You may also store the user object here for easier info access
   userId: string;
-  toUserId: string; 
+  toUserId: string;
+
+  handler;
 
   @ViewChild(Content) content: Content;
   @ViewChild('chat_input') messageInput: TextInput;
@@ -45,10 +47,10 @@ export class ChatroomPage {
     console.log('chatroom loaded');
     if (!this.conversation) {return;}
 
-    this.conversations.getMessages(this.conversation).then((result) => {
+    this.conversations.getMessages(this.conversation.skygearRecord).then((result) => {
       this.msgList = result;
       this.scrollToBottom();
-
+      this.subscribeMessageUpdate();
     }).catch((error) => {
       console.log("My error:",error);
       alert("Couldn't load messages :( ");
@@ -60,12 +62,15 @@ export class ChatroomPage {
     this.scrollToBottom();
   }
 
+  ionViewWillLeave () {
+    this.unsubscribeMessageUpdate();
+  }
+
   initThumbnail() {
     console.log(this.conversation);
-    this.conversations.fetchConversation(this.conversation._id).then(result => {
+    this.conversations.fetchConversation(this.conversation.skygearRecord._id).then(result => {
       console.log(result);
-      this.conversation = result;
-      this.title = this.conversation.title;
+      this.conversation.skygearRecord = result;
       var firstParticipant = this.conversation.participant_ids[0]; // And not myself
 
       this.user.getUserProfile(firstParticipant).then(participant => {
@@ -90,8 +95,8 @@ export class ChatroomPage {
 
     // TODO: You can add pending state here
     this.editorMsg = '';
-    this.conversations.addMessageInConversation(this.conversation, message, {}, null).then(result => {
-      this.pushNewMsg(result);
+    this.conversations.addMessageInConversation(this.conversation.skygearRecord, message, {}, "").then(result => {
+      // this.pushNewMsg(result); // Pushing a message will be handled in subscribeMessageUpdate();
     });
   }
 
@@ -103,11 +108,35 @@ export class ChatroomPage {
   }
 
   scrollToBottom() {
-      setTimeout(() => {
-          if (this.content.scrollToBottom) {
-              this.content.scrollToBottom();
-          }
-      }, 400);
+    setTimeout(() => {
+        if (this.content) {
+            this.content.scrollToBottom();
+        }
+    }, 400);
+  }
+
+
+// TODO: Fix me
+  h;
+
+  subscribeMessageUpdate() {
+    this.conversations.subscribeOneConversation(this.conversation.skygearRecord, (update) => {
+    console.log('update', update);
+    if (update.event_type == "create") {
+      this.pushNewMsg(this.conversations.convertMessage(update.record));
+    } else if (update.event_type == "update"){
+      // handle message update here
+    }
+  }).then(h => {
+      this.h = h;
+    });
+  }
+
+  unsubscribeMessageUpdate() {
+    if (this.h) {
+      this.conversations.unsubscribeConversation(this.h);
+    }
+
   }
 
 }

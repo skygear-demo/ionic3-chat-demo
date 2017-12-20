@@ -4,6 +4,7 @@ import 'rxjs/add/operator/toPromise';
 import { Injectable } from '@angular/core';
 import { Conversation } from '../../models/conversation';
 import { Message } from '../../models/message';
+import { User } from '../user/user';
 
 import {
   SkygearService, SkygearConversation
@@ -15,7 +16,8 @@ export class Conversations {
   conversations;
 
   constructor(
-    private skygearService: SkygearService) { 
+    private skygearService: SkygearService,
+    private user: User) { 
   }
 
   /* Conversations */
@@ -58,19 +60,51 @@ export class Conversations {
   }
 
   getConversationByID(conversationID) {
-    return new SkygearConversation({'_id': 'Conversation/'+conversationID});
+    return new SkygearConversation({'_id': 'conversation/'+conversationID});
   }
 
   fetchConversation(conversation) {
     return new Promise((resolve, reject) => {
-      console.log('creating conversation');
+      console.log('Fetching conversation');
       this.skygearService.getSkygearChat().then(skygearchat => {
         // this API requires id in format without type of "type/id"
-        skygearchat.getConversation(conversation, true).then((result) => { 
+        skygearchat.getConversation(conversation._id, true).then((result) => { 
           resolve(result);
         }).catch((error) => {
           reject(error);
         });
+      });
+    });
+  }
+
+  getConversationTitle(conversation) {
+    return new Promise((resolve, reject) => {
+      this.user.getCurrentUser().then(user => {
+        var userId = user["_id"];
+
+        console.log("userId", userId);
+        console.log("conversation.participant_ids", conversation.participant_ids);
+
+
+        // Assume only one user
+        var anotherUserId;
+
+        for (var i in conversation.participant_ids) {
+          var participantId = conversation.participant_ids[i];
+          if (participantId !== userId) {
+            anotherUserId = participantId;
+          }
+        }
+        
+        this.user.getUserProfile(anotherUserId).then(user=> {
+          console.log('user as title');
+          console.log(user);
+          resolve(user["name"]);
+        }).catch(error=> {
+          console.error(error);
+          reject(error);
+        });
+
       });
     });
   }
@@ -108,20 +142,9 @@ export class Conversations {
         skygearchat.getMessages(conversation, LIMIT, currentTime)
           .then(function (messages) {
             let lastMsgTime;
-            messages.forEach(function (m) {
 
-              console.log("messages", m);
-              // const liNode = document.createElement('LI');
-              // liNode.appendChild(document.createTextNode(m.content));
-              // ulNode.appendChild(liNode);
-              // lastMsgTime = m.createAt;
-
-            });
-            console.log(_me);
             var parsedMessages = _me.parseMessages(messages);
             resolve(parsedMessages);
-            // Querying next page
-            // skygearChat.getMessages(conversation, 10, lastMsgTime).then();
           }, function (error) {
             console.log('Error: ', error);
             reject(error);
@@ -146,6 +169,43 @@ export class Conversations {
           resolve(_me.convertMessage(result));
         }).catch((error)=> {
           console.log('Error', error);
+          reject(error);
+        });
+      });
+    });
+  }
+
+  /* Realtime update */
+  subscribeOneConversation(conversation, handler) {
+    return new Promise((resolve, reject)=> {
+      this.skygearService.getSkygearChat().then(skygearchat => {
+        var h = (update)=> {
+          if (update.record && conversation.id == update.record.conversation.id) {
+            handler(update);
+          }
+        }
+        skygearchat.subscribe(h);
+
+        resolve(h);
+      });
+    });
+  }
+
+  unsubscribeConversation(handler) {
+    return new Promise((resolve, reject) => {
+      let h = handler;
+      this.skygearService.getSkygearChat().then(skygearchat => {
+        skygearchat.unsubscribe(h);
+      });
+    });
+  }
+
+  getUnreadCount() {
+    return new Promise((resolve, reject) => {
+      this.skygearService.getSkygearChat().then(skygearchat => {
+        skygearchat.getUnreadCount().then(result => {
+          resolve(result);
+        }).catch(error => {
           reject(error);
         });
       });

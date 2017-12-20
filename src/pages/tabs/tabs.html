@@ -1,5 +1,5 @@
 <ion-tabs>
   <ion-tab [root]="productListRoot" tabTitle="Products" tabIcon="ios-basket-outline"></ion-tab>
-  <ion-tab [root]="directChatListRoot" tabTitle="Chats" tabIcon="ios-contacts-outline"></ion-tab>
+  <ion-tab [root]="directChatListRoot" tabTitle="Chats" tabIcon="ios-contacts-outline" tabBadge="{{ this.messageNotificationCount }}"></ion-tab>
   <!-- <ion-tab [root]="groupChatListRoot" tabTitle="Channels" tabIcon="contacts"></ion-tab> -->
 </ion-tabs>

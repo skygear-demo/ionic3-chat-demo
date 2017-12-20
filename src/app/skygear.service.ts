@@ -49,5 +49,5 @@ export class SkygearService {
 }
 
 
-export const SkygearConversation = skygear.Record.extend('Conversation');
-export const SkygearMessage = skygear.Record.extend('Message');
+export const SkygearConversation = skygear.Record.extend('conversation');
+export const SkygearMessage = skygear.Record.extend('message');

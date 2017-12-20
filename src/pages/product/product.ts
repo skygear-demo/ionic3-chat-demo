@@ -4,6 +4,7 @@ import { SettingsPage } from '../settings/settings';
 import { ChatroomPage } from '../chatroom/chatroom';
 import { Products, Conversations } from '../../providers/providers';
 import { Product } from '../../models/product'
+import { Conversation } from '../../models/conversation'
 
 
 @Component({
@@ -38,8 +39,18 @@ export class ProductPage {
 
   openChatroom (conversation, product: Product) {
     console.log(conversation);
-    this.app.getRootNav().push(ChatroomPage, {conversation: conversation, product: product });
 
+    this.conversations.fetchConversation(conversation).then(updatedConversation => {
+      var mConversation= new Conversation();
+      mConversation.setFields(updatedConversation);
+
+      this.conversations.getConversationTitle(updatedConversation).then(title => {
+        mConversation.title = title;
+        this.app.getRootNav().push(ChatroomPage, {conversation: mConversation, product: product });
+      });
+
+      
+    });
   }
 
   message(userID, product: Product) {
@@ -47,7 +58,6 @@ export class ProductPage {
     // if no existing conversation with user => create
     this.conversations.createConversation(userID).then(conversation => {
       this.openChatroom(conversation, product);
-
 
       // nevigation to conversation
     }).catch(error=> {
