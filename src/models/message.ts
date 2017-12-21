@@ -32,7 +32,9 @@ export class Message {
            ,month < 10 ? '0' + month : month
            ,day < 10 ? '0' + day : day
           ].join('-');
-    return formattedDate;
+
+    let formattedTime = this.time.toLocaleTimeString();
+    return formattedDate + ' ' + formattedTime;
   }
 
   // Template
