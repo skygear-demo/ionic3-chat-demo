@@ -33,8 +33,7 @@ export class HomePage {
   }
 
   loadConversations() {
-    this.conversations.getConversationList().then((conversations) => {
-      
+    this.conversations.getConversationList().then((conversations : any[]) => {
       this.myConversations = [];
 
       conversations.forEach((skygearConversation) => {

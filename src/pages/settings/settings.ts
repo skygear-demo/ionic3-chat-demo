@@ -19,8 +19,8 @@ export class SettingsPage {
   ionViewWillEnter() {
     this.user.getCurrentUser().then(currentUser => {
       if (currentUser) {
-        this.user.getUserProfile(currentUser._id).then(userprofile => {
-          this.username = userprofile.name;
+        this.user.getUserProfile(currentUser["_id"]).then(userprofile => {
+          this.username = userprofile["name"];
         });
       }
     });

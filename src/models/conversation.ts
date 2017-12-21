@@ -1,7 +1,7 @@
 export class Conversation {
 
     id: string;
-    title: string;
+    title;
     unreadCount: number = 0;
     skygearRecord;
     lastMessage;
