@@ -21,10 +21,8 @@ export class SkygearService {
 
   getSkygear() {
     if (this.isConfigurated) {
-      console.log("Configed");
       return Promise.resolve(skygear);
     }
-    console.log("Create Config");
     let promise = this.configSkygear();
     return promise;
   }
@@ -32,7 +30,6 @@ export class SkygearService {
   getSkygearChat() {
     if (this.isConfigurated) {
       console.log("Configed");
-      console.log(skygearchat);
       skygearchat.skygear = skygear;
 
       return Promise.resolve(skygearchat);
@@ -47,7 +44,6 @@ export class SkygearService {
     }
   }
 }
-
 
 export const SkygearConversation = skygear.Record.extend('conversation');
 export const SkygearMessage = skygear.Record.extend('message');
