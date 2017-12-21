@@ -32,7 +32,6 @@ export class User {
     var skygearPromise = new Promise((resolve, reject) => {
       this.skygearService.getSkygear()
         .then((skygear) => {
-          console.log(`Skygear OK`);
           skygear.auth.signupWithUsername(username, password).then((user)=> {
             console.log(user);
             resolve(user);
@@ -55,7 +54,6 @@ export class User {
     var skygearPromise = new Promise((resolve, reject) => {
       this.skygearService.getSkygear()
         .then((skygear) => {
-          console.log(`Skygear OK`);
           skygear.auth.loginWithUsername(username, password).then((user)=> {
             console.log(user);
             resolve(user);
@@ -78,14 +76,12 @@ export class User {
     var skygearPromise = new Promise((resolve, reject) => {
       this.skygearService.getSkygear()
         .then((skygear) => {
-          console.log(`Skygear OK`);
           skygear.auth.logout().then((user)=> {
             console.log(user);
             resolve(user);
           });
         })
         .catch((error) => {
-          console.log(`Skygear Error`);
           console.error(error);
           reject(error);
         });

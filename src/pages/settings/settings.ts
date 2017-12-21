@@ -12,7 +12,18 @@ export class SettingsPage {
   constructor(public navCtrl: NavController,
     public viewCtrl: ViewController,
     private user: User) {
+  }
 
+  username:string;
+
+  ionViewWillEnter() {
+    this.user.getCurrentUser().then(currentUser => {
+      if (currentUser) {
+        this.user.getUserProfile(currentUser._id).then(userprofile => {
+          this.username = userprofile.name;
+        });
+      }
+    });
   }
 
   logout() {

@@ -115,6 +115,7 @@ export class Conversations {
     message.time = msg.createdAt;
     message.id = msg._id;
     message.sender = msg.ownerID;
+    message.skygearRecord = msg;
 
     return message;
   }
@@ -209,6 +210,30 @@ export class Conversations {
           reject(error);
         });
       });
+    });
+  }
+
+  markAsLastMessageRead(conversation, message) {
+    return new Promise((resolve, reject) => {
+      this.skygearService.getSkygearChat().then(skygearchat => {
+          skygearchat.markAsLastMessageRead(conversation, message).then(result=>{
+            resolve(result);
+          }).catch(error => {
+            reject(error);
+          })
+        });
+    });
+  }
+
+  markAsRead(messages) {
+    return new Promise((resolve, reject) => {
+      this.skygearService.getSkygearChat().then(skygearchat => {
+          skygearchat.markAsRead(messages).then(result=>{
+            resolve(result);
+          }).catch(error => {
+            reject(error);
+          })
+        });
     });
   }
 
