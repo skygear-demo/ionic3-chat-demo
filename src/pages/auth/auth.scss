@@ -29,7 +29,7 @@ page-auth {
   }
 
   .signup-hint {
-    color: #64B5F6;;
+    color: #64B5F6;
   }
 
   button.signup {
@@ -37,6 +37,10 @@ page-auth {
   }
 
   .login-hint {
-    color: #4DB6AC;;
+    color: #4DB6AC;
+  }
+
+  .auth-error-message {
+    color: #ff0000;
   }
 }
