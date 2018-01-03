@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { App, NavController, NavParams, ModalController } from 'ionic-angular';
+import { App, NavController, ModalController } from 'ionic-angular';
 import { SettingsPage } from '../settings/settings';
 import { ChatroomPage } from '../chatroom/chatroom';
 import { Products, Conversations } from '../../providers/providers';
@@ -17,7 +17,7 @@ export class ProductPage {
   constructor(public navCtrl: NavController,
     private modalCtrl: ModalController,
     private products: Products,
-    private conversations:Conversations, 
+    private conversations:Conversations,
     private app: App) {
   }
 
@@ -49,7 +49,7 @@ export class ProductPage {
         this.app.getRootNav().push(ChatroomPage, {conversation: mConversation, product: product });
       });
 
-      
+
     });
   }
 

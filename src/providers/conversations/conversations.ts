@@ -2,7 +2,6 @@
 
 import 'rxjs/add/operator/toPromise';
 import { Injectable } from '@angular/core';
-import { Conversation } from '../../models/conversation';
 import { Message } from '../../models/message';
 import { User } from '../user/user';
 
@@ -17,7 +16,7 @@ export class Conversations {
 
   constructor(
     private skygearService: SkygearService,
-    private user: User) { 
+    private user: User) {
   }
 
   /* Conversations */
@@ -125,7 +124,7 @@ export class Conversations {
     var result = [];
     for (var i in messages) {
       var message = this.convertMessage(messages[i])
-      
+
       if(!messages[i].deleted) {
         result.unshift(message);
       }
@@ -133,7 +132,7 @@ export class Conversations {
     return result;
   }
 
-  getMessages(conversation) { 
+  getMessages(conversation) {
     let _me = this;
     return new Promise((resolve, reject) => {
       this.skygearService.getSkygearChat().then(skygearchat => {
@@ -142,8 +141,6 @@ export class Conversations {
         const currentTime = new Date();
         skygearchat.getMessages(conversation, LIMIT, currentTime)
           .then(function (messages) {
-            let lastMsgTime;
-
             var parsedMessages = _me.parseMessages(messages);
             resolve(parsedMessages);
           }, function (error) {
