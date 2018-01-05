@@ -1,10 +1,8 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
-import { IonicPage } from 'ionic-angular';
-import { Events, Content, TextInput } from 'ionic-angular';
-import { Products, Conversations, User } from '../../providers/providers';
+import { Content, TextInput } from 'ionic-angular';
+import { Conversations, User } from '../../providers/providers';
 
-import { Message } from '../../models/message';
 
 @Component({
   selector: 'page-chatroom',

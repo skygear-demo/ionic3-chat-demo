@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController } from 'ionic-angular';
 
 import { ProductPage } from '../product/product';
 import { ContactPage } from '../contact/contact';
@@ -54,8 +54,6 @@ export class TabsPage {
     this.messageNotificationCount = null;
 
     this.conversations.getUnreadCount().then(result => {
-      var messageCount = result["message"];
-      var conversationCount = result["message"];
       this.messageNotificationCount = result["message"];
     });
   }
