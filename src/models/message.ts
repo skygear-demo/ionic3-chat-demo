@@ -8,6 +8,8 @@ export class Message {
   status: string = 'pending';
   sender: string;
   skygearRecord;
+  attachment;
+  metadata;
 
   constructor(args) {
     if (args) {

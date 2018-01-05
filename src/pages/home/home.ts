@@ -29,7 +29,7 @@ export class HomePage {
   }
 
   openConversation(conversation) {
-    this.app.getRootNav().push(ChatroomPage, {conversation: conversation});
+    this.app.getRootNavs()[0].push(ChatroomPage, {conversation: conversation});
   }
 
   loadConversations() {

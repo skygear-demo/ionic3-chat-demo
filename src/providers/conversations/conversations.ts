@@ -111,6 +111,12 @@ export class Conversations {
   convertMessage(msg) {
     var message = new Message({});
     message.message = msg.body;
+    if (msg.attachment) {
+      message.attachment = msg.attachment;
+    }
+    if (msg.metadata) {
+      message.metadata = msg.metadata;
+    }
     message.time = msg.createdAt;
     message.id = msg._id;
     message.sender = msg.ownerID;
