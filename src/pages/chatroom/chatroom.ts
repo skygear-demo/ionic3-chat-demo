@@ -34,7 +34,6 @@ export class ChatroomPage {
     public conversations: Conversations,
     public user: User,
     private imagePicker: ImagePicker,
-    private file: File,
     private photoViewer: PhotoViewer) {
       this.conversation = navParams.get('conversation');
       this.productContext = navParams.get('product');
