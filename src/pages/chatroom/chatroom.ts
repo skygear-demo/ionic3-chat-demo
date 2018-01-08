@@ -2,11 +2,16 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 import { Content, TextInput } from 'ionic-angular';
 import { Conversations, User } from '../../providers/providers';
+import { ImagePicker } from '@ionic-native/image-picker';
+import skygear from 'skygear';
+import { File } from '@ionic-native/file';
+import { PhotoViewer } from '@ionic-native/photo-viewer';
 
 
 @Component({
   selector: 'page-chatroom',
-  templateUrl: 'chatroom.html'
+  templateUrl: 'chatroom.html',
+  providers: [ImagePicker, File, PhotoViewer]
 })
 export class ChatroomPage {
   conversation;
@@ -27,7 +32,10 @@ export class ChatroomPage {
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public conversations: Conversations,
-    public user: User) {
+    public user: User,
+    private imagePicker: ImagePicker,
+    private file: File,
+    private photoViewer: PhotoViewer) {
       this.conversation = navParams.get('conversation');
       this.productContext = navParams.get('product');
       this.title = this.conversation.title;
@@ -93,9 +101,7 @@ export class ChatroomPage {
 
     // TODO: You can add pending state here
     this.editorMsg = '';
-    this.conversations.addMessageInConversation(this.conversation.skygearRecord, message, {}, "").then(result => {
-      // this.pushNewMsg(result); // Pushing a message will be handled in subscribeMessageUpdate();
-    });
+    this.conversations.addMessageInConversation(this.conversation.skygearRecord, message, {}, "");
   }
 
   pushNewMsg(msg) {
@@ -103,6 +109,48 @@ export class ChatroomPage {
     this.scrollToBottom();
 
     return msg;
+  }
+
+  resizeImage(base64String, maxSize, callback) {
+    const canvas = document.createElement('canvas');
+    const image = new Image();
+    image.onload = function() {
+      const ctx = canvas.getContext("2d");
+      const size = Math.max(image.width, image.height);
+      const ratio = Math.min(1.0, maxSize / size);
+      canvas.width = image.width * ratio;
+      canvas.height = image.height * ratio;
+      ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+      callback(canvas.toDataURL(), canvas.width, canvas.height);
+    }
+    image.src = base64String;
+  }
+
+  sendAttachment() {
+    this.imagePicker.getPictures({}).then((results) => {
+      this.resizeImage(results[0], 1600.0, (newImage, newWidth, newHeight) => {
+        this.resizeImage(results[0], 80.0, (thumbnail, thumbnailWidth, thumbnailHeight) => {
+          let base64File = newImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, '')
+          const skyAsset = new skygear.Asset({
+                base64: base64File,
+                name: "image.png",
+                contentType: "image/png"
+              });
+          const meta = {'thumbnail': thumbnail, 'width': thumbnailWidth, 'height': thumbnailHeight};
+          this.conversations.addMessageInConversation(this.conversation.skygearRecord, '', meta, skyAsset).catch(e => console.log(e));
+        });
+      });
+    }).catch(e => console.log(e));
+  }
+
+  showImage(url) {
+    this.photoViewer.show(url);
+  }
+
+  onLoadImage(evt, url) {
+    if (evt.target.src != url) {
+      evt.target.src = url;
+    }
   }
 
   scrollToBottom() {
