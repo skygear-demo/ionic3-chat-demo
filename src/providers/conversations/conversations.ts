@@ -98,7 +98,7 @@ export class Conversations {
         this.user.getUserProfile(anotherUserId).then(user=> {
           console.log('user as title');
           console.log(user);
-          resolve(user["name"]);
+          resolve(user.username);
         }).catch(error=> {
           console.error(error);
           reject(error);
