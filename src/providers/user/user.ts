@@ -10,7 +10,7 @@ import {
 export class User {
 
   constructor(
-    private skygearService: SkygearService) { 
+    private skygearService: SkygearService) {
   }
 
   getCurrentUser() {
@@ -58,7 +58,7 @@ export class User {
             console.log(user);
             resolve(user);
           }).catch(error => {
-            console.log(`Skygear Signup Error`);
+            console.log(`Skygear Signin Error`);
             console.error(error);
             reject(error);
           });

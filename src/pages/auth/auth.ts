@@ -11,6 +11,7 @@ import { TabsPage } from '../tabs/tabs';
 export class AuthPage {
   username:string;
   password:string;
+  errorMessage:string;
 
   mode:string = 'signin'; // signin / signup
 
@@ -24,7 +25,9 @@ export class AuthPage {
       console.log("OK");
       this.navCtrl.setRoot(TabsPage);
       this.navCtrl.popToRoot();
+      this.errorMessage = "";
     }).catch(error => {
+      this.errorMessage = "Failed to sign in: " + error.error.message;
       console.log('Not OK', error);
     });
   }
@@ -35,7 +38,9 @@ export class AuthPage {
       console.log("OK");
       this.navCtrl.setRoot(TabsPage);
       this.navCtrl.popToRoot();
+      this.errorMessage = "";
     }).catch(error => {
+      this.errorMessage = "Failed to sign up:" + error.error.message;
       console.log('Not OK', error);
     });
   }

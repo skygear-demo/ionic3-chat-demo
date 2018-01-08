@@ -8,7 +8,7 @@
         </div>
     </ion-col>
   </ion-row>
-  
+
   <ion-row>
     <ion-col col-12 col-lg-6 offset-lg-3 text-center>
       <ion-list>
@@ -20,10 +20,15 @@
           <ion-label floating>Password</ion-label>
           <ion-input [(ngModel)]="password"  type="password" value=""></ion-input>
         </ion-item>
+        <ion-item>
+          <span class="auth-error-message" ng-bind="errorMessage">
+            {{errorMessage}}
+          </span>
+        </ion-item>
       </ion-list>
     </ion-col>
   </ion-row>
-  
+
   <section *ngIf="mode=='signin'">
   <ion-row>
     <ion-col col-12 text-center>
