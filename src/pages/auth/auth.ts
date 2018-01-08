@@ -27,7 +27,7 @@ export class AuthPage {
       this.navCtrl.popToRoot();
       this.errorMessage = "";
     }).catch(error => {
-      this.errorMessage = "Failed to sign in.";
+      this.errorMessage = "Failed to sign in: " + error.error.message;
       console.log('Not OK', error);
     });
   }
@@ -40,7 +40,7 @@ export class AuthPage {
       this.navCtrl.popToRoot();
       this.errorMessage = "";
     }).catch(error => {
-      this.errorMessage = "Failed to sign up.";
+      this.errorMessage = "Failed to sign up:" + error.error.message;
       console.log('Not OK', error);
     });
   }
