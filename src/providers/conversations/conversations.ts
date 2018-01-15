@@ -94,11 +94,11 @@ export class Conversations {
             anotherUserId = participantId;
           }
         }
-        
+
         this.user.getUserProfile(anotherUserId).then(user=> {
           console.log('user as title');
           console.log(user);
-          resolve(user.username);
+          resolve(user['username']);
         }).catch(error=> {
           console.error(error);
           reject(error);

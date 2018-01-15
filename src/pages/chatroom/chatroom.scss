@@ -141,4 +141,26 @@ page-chatroom {
     }
 
   }
+
+  .recording {
+     display: flex!important;
+     align-content: center!important;
+     align-items: center!important;
+     height: 100%;
+     margin: auto;
+     position: absolute;
+     top: 0; left: 0; bottom: 0; right:0;
+     color: $userBackgroundColor;
+     font-size: 1.2em;
+     flex-grow: 1;
+  }
+
+  .audio-button {
+    color : white;
+    font-size: 1.5em;
+  }
+
+  .hidden {
+    visibility:hidden;
+  }
 }

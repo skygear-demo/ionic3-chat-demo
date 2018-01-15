@@ -24,8 +24,18 @@
                 <div class="msg-content">
                     <span class="triangle"></span>
                     <p class="line-breaker" *ngIf="! msg.attachment">{{msg.message}}</p>
-                    <img src={{msg.attachment.url}} *ngIf="msg.attachment && ! msg.metadata.thumbnail">
+                    <img src={{msg.attachment.url}} *ngIf="msg.attachment && ! msg.metadata.thumbnail && msg.attachment.contentType.startsWith('image')">
                     <img src={{msg.metadata.thumbnail}} *ngIf="msg.metadata && msg.metadata.thumbnail" (load)="onLoadImage($event, msg.attachment.url)" width={{msg.metadata.width}} (click)="showImage(msg.attachment.url)"/>
+                    <button *ngIf="msg.attachment && ! msg.attachment.contentType.startsWith('image')" (click)="openURL(msg.attachment.url)">
+                      <section *ngIf="msg.attachment.url !== this.audioFilePlayingURL">
+                         <ion-icon name="ios-play" ios="ios-play" md="md-play" class="audio-button"></ion-icon>
+                      </section>
+                       <section *ngIf="msg.attachment.url === this.audioFilePlayingURL">
+                         <ion-icon name="ios-square" ios="ios-square" md="md-square" class="audio-button"></ion-icon>
+                      </section>
+                      <br/>
+                      <p class="audio-button">{{msg.metadata.length / 1000}}&nbsp;s</p>
+                    </button>
                 </div>
             </div>
         </div>
@@ -34,26 +44,53 @@
 
 <ion-footer no-border>
     <ion-grid class="input-wrap">
-        <ion-row>
-
-           <ion-col col-1>
-               <button ion-button clear icon-only item-right (click)="sendAttachment()">
-                   <ion-icon name="ios-attach" ios="ios-attach" md="md-attach"></ion-icon>
+        <section *ngIf="this.shouldShowTextMessageBar">
+          <ion-row>
+             <ion-col col-1>
+               <button ion-button clear icon-only item-right (click)="showAudioRecordingBar()">
+                 <ion-icon name="ios-microphone" ios="ios-microphone" md="md-microphone"></ion-icon>
                </button>
-            </ion-col>
-            <ion-col col-10>
-                <ion-textarea #chat_input
-                              placeholder="Text Input"
-                              [(ngModel)]="editorMsg"
-                              (keyup.enter)="sendMsg()"
-                              (focus)="onFocus()">
-                </ion-textarea>
-            </ion-col>
-            <ion-col col-2>
+             </ion-col>
+             <ion-col col-1>
+                 <button ion-button clear icon-only item-right (click)="sendAttachment()">
+                     <ion-icon name="ios-attach" ios="ios-attach" md="md-attach"></ion-icon>
+                 </button>
+              </ion-col>
+              <ion-col col-10>
+                  <ion-textarea #chat_input
+                                placeholder="Text Input"
+                                [(ngModel)]="editorMsg"
+                                (keyup.enter)="sendMsg()"
+                                (focus)="onFocus()">
+                  </ion-textarea>
+              </ion-col>
+              <ion-col col-2>
                 <button ion-button clear icon-only item-right (click)="sendMsg()">
-                    <ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>
+                  <ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>
                 </button>
+              </ion-col>
+          </ion-row>
+        </section>
+        <section *ngIf="! this.shouldShowTextMessageBar">
+          <ion-row>
+            <ion-col col-9>
+               <div class="recording">
+                Recording...
+              </div>
             </ion-col>
-        </ion-row>
+            <ion-col col-1>
+              <button ion-button clear icon-only item-right (click)="sendAudioRecordingMessage()">
+                <ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>
+              </button>
+            </ion-col>
+            <ion-col col-1>
+            </ion-col>
+            <ion-col col-1>
+              <button ion-button clear icon-only item-right (click)="showTextMessageBar()">
+                <ion-icon name="ios-close-circle" ios="ios-close-circle" md="ios-close-circle"></ion-icon>
+              </button>
+            </ion-col>
+          </ion-row>
+        </section>
     </ion-grid>
 </ion-footer>

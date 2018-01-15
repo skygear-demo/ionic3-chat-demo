@@ -1,24 +1,33 @@
-import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
-import { Content, TextInput } from 'ionic-angular';
-import { Conversations, User } from '../../providers/providers';
-import { ImagePicker } from '@ionic-native/image-picker';
-import skygear from 'skygear';
-import { File } from '@ionic-native/file';
-import { PhotoViewer } from '@ionic-native/photo-viewer';
+import { Component, ViewChild, NgZone } from "@angular/core";
+import { NavController, NavParams } from "ionic-angular";
+import { Content, TextInput } from "ionic-angular";
+import { Conversations, User } from "../../providers/providers";
+import { ImagePicker } from "@ionic-native/image-picker";
+import skygear from "skygear";
+import { File } from "@ionic-native/file";
+import { PhotoViewer } from "@ionic-native/photo-viewer";
+import { Platform } from "ionic-angular";
+import { Media } from "@ionic-native/media";
+
 
 
 @Component({
-  selector: 'page-chatroom',
-  templateUrl: 'chatroom.html',
-  providers: [ImagePicker, File, PhotoViewer]
+  selector: "page-chatroom",
+  templateUrl: "chatroom.html",
+  providers: [ImagePicker, File, PhotoViewer, Media]
 })
 export class ChatroomPage {
   conversation;
   productContext;
-  title = '';
-  editorMsg = '';
+  title = "";
+  editorMsg = "";
   msgList;
+  shouldShowTextMessageBar = true;
+  audioFile;
+  audioRecordingStartTime; //getDuration not working https://github.com/apache/cordova-plugin-media/pull/94/files
+  audioRecordingEndTime;
+  audioFilePlaying;
+  audioFilePlayingURL = "";
 
   //You may also store the user object here for easier info access
   userId: string;
@@ -27,16 +36,21 @@ export class ChatroomPage {
   handler;
 
   @ViewChild(Content) content: Content;
-  @ViewChild('chat_input') messageInput: TextInput;
+  @ViewChild("chat_input") messageInput: TextInput;
 
   constructor(public navCtrl: NavController,
     public navParams: NavParams,
     public conversations: Conversations,
     public user: User,
     private imagePicker: ImagePicker,
-    private photoViewer: PhotoViewer) {
-      this.conversation = navParams.get('conversation');
-      this.productContext = navParams.get('product');
+    private photoViewer: PhotoViewer,
+    private platform: Platform,
+    private media: Media,
+    private file: File,
+    private zone: NgZone
+    ) {
+      this.conversation = navParams.get("conversation");
+      this.productContext = navParams.get("product");
       this.title = this.conversation.title;
       this.initThumbnail();
 
@@ -49,7 +63,7 @@ export class ChatroomPage {
   }
 
   ionViewDidLoad() {
-    console.log('chatroom loaded');
+    console.log("chatroom loaded");
     if (!this.conversation) {return;}
 
     this.conversations.getMessages(this.conversation.skygearRecord).then((result) => {
@@ -69,6 +83,7 @@ export class ChatroomPage {
 
   ionViewWillLeave () {
     this.unsubscribeMessageUpdate();
+    this.stopAudioRecording();
   }
 
   initThumbnail() {
@@ -99,7 +114,7 @@ export class ChatroomPage {
     let message = this.editorMsg;
 
     // TODO: You can add pending state here
-    this.editorMsg = '';
+    this.editorMsg = "";
     this.conversations.addMessageInConversation(this.conversation.skygearRecord, message, {}, "");
   }
 
@@ -111,7 +126,7 @@ export class ChatroomPage {
   }
 
   resizeImage(base64String, maxSize, callback) {
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     const image = new Image();
     image.onload = function() {
       const ctx = canvas.getContext("2d");
@@ -129,14 +144,14 @@ export class ChatroomPage {
     this.imagePicker.getPictures({}).then((results) => {
       this.resizeImage(results[0], 1600.0, (newImage, newWidth, newHeight) => {
         this.resizeImage(results[0], 80.0, (thumbnail, thumbnailWidth, thumbnailHeight) => {
-          let base64File = newImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, '')
+          let base64File = newImage.replace(/^data:image\/(png|jpeg|jpg);base64,/, "")
           const skyAsset = new skygear.Asset({
                 base64: base64File,
                 name: "image.png",
                 contentType: "image/png"
               });
-          const meta = {'thumbnail': thumbnail, 'width': thumbnailWidth, 'height': thumbnailHeight};
-          this.conversations.addMessageInConversation(this.conversation.skygearRecord, '', meta, skyAsset).catch(e => console.log(e));
+          const meta = {"thumbnail": thumbnail, "width": thumbnailWidth, "height": thumbnailHeight};
+          this.conversations.addMessageInConversation(this.conversation.skygearRecord, "", meta, skyAsset).catch(e => console.log(e));
         });
       });
     }).catch(e => console.log(e));
@@ -144,6 +159,90 @@ export class ChatroomPage {
 
   showImage(url) {
     this.photoViewer.show(url);
+  }
+
+  stopAudioRecording() {
+    if (this.audioFile) {
+      this.audioFile.stopRecord();
+      this.audioFile.release();
+    }
+  }
+
+  openURL(url) {
+    if (this.audioFilePlaying) {
+      this.audioFilePlaying.stop();
+      this.audioFilePlaying.release();
+    }
+
+    this.audioFilePlayingURL = url;
+    this.audioFilePlaying = this.media.create(url);
+    this.audioFilePlaying.play();
+    this.audioFilePlaying.onStatusUpdate.subscribe(status => {
+      console.log(status);
+      if (status == 4) {
+        console.log(this.audioFilePlayingURL);
+        this.zone.run(() => {
+          console.log('Finished');
+          this.audioFilePlayingURL = "";
+        });
+      }
+    });
+  }
+
+  getAudioDirectory() {
+    if (this.platform.is('android')) {
+      return this.file.externalCacheDirectory;
+    }
+    return this.file.tempDirectory;
+  }
+
+  getAudioFileName() {
+    if (this.platform.is('android')) {
+      return "temp.3gp";
+    }
+    return "temp.m4a";
+  }
+
+  getMIME() {
+    if (this.platform.is('android')) {
+      return "video/3gpp";
+    }
+    return "audio/x-m4a";
+  }
+
+  startAudioRecording() {
+    this.stopAudioRecording();
+    let directory = this.getAudioDirectory();
+    directory = directory.replace(/^file:\/\//, "");
+    this.audioFile = this.media.create(directory + this.getAudioFileName());
+    console.log(this.audioFile);
+    this.audioFile.startRecord();
+    this.audioRecordingStartTime = Date.now();
+  }
+
+  showAudioRecordingBar() {
+    this.shouldShowTextMessageBar = false;
+    this.startAudioRecording();
+  }
+
+  sendAudioRecordingMessage() {
+    this.audioRecordingEndTime = Date.now();
+    const duration = this.audioRecordingEndTime - this.audioRecordingStartTime;
+    console.log("start sending audio");
+    console.log(duration);
+    this.shouldShowTextMessageBar = true;
+    this.stopAudioRecording();
+    const meta = {"length": Math.trunc(duration)};
+    this.file.readAsDataURL(this.getAudioDirectory(), this.getAudioFileName()).then((base64File) => {
+      base64File = base64File.replace(/^data:audio\/(x-m4a|mpeg);base64,/, "");
+      const skyAsset = new skygear.Asset({contentType: this.getMIME(), base64: base64File, name: this.getAudioFileName()});
+      this.conversations.addMessageInConversation(this.conversation.skygearRecord, "", meta, skyAsset).catch(e => console.log(e));
+    });
+  }
+
+  showTextMessageBar() {
+    this.shouldShowTextMessageBar = true;
+    this.stopAudioRecording();
   }
 
   onLoadImage(evt, url) {
@@ -166,7 +265,7 @@ export class ChatroomPage {
 
   subscribeMessageUpdate() {
     this.conversations.subscribeOneConversation(this.conversation.skygearRecord, (update) => {
-    console.log('update', update);
+    console.log("update", update);
     if (update.event_type == "create") {
       this.pushNewMsg(this.conversations.convertMessage(update.record));
     } else if (update.event_type == "update"){

@@ -46,7 +46,7 @@ export class ProductPage {
 
       this.conversations.getConversationTitle(updatedConversation).then(title => {
         mConversation["title"] = title;
-        this.app.getRootNav().push(ChatroomPage, {conversation: mConversation, product: product });
+        this.app.getRootNavs()[0].push(ChatroomPage, {conversation: mConversation, product: product });
       });
 
 
