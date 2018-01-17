@@ -32,7 +32,7 @@
     "android-versions": "^1.2.2",
     "com.synconset.imagepicker": "~2.1.8",
     "cordova-android": "~6.5.0-nightly.2017.11.22.64047801",
-    "cordova-ios": "~4.5.4",
+    "cordova-ios": "4.5.4",
     "cordova-plugin-device": "1.1.4",
     "cordova-plugin-file": "^6.0.0",
     "cordova-plugin-media": "^5.0.1",
