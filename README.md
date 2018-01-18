@@ -8,9 +8,8 @@
 - Conversation list
 - Send text messages
 - Send image from gallery
-- Send audio (coming soon)
-- Push notification (coming soon)
-
+- Send audio 
+- Push notification 
 ### App Structure
 ![](doc/app-architecture.jpeg)
 
