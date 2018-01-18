@@ -105,7 +105,6 @@ export class Conversations {
         console.log("userId", userId);
         console.log("conversation.participant_ids", conversation.participant_ids);
 
-
         // Assume only one user
         var anotherUserId;
 
@@ -190,7 +189,27 @@ export class Conversations {
           file
         ).then(function (result) {
           console.log('Save success', result);
-          _me.sendToThis();
+          
+          // Send a push to another user in the chat!
+          this.user.getCurrentUser().then(user => {
+            var userId = user["_id"];
+
+            console.log("userId", userId);
+            console.log("conversation.participant_ids", conversation.participant_ids);
+
+            // Assume only one user
+            var anotherUserId;
+
+            for (var i in conversation.participant_ids) {
+              var participantId = conversation.participant_ids[i];
+              if (participantId !== userId) {
+                anotherUserId = participantId;
+              }
+            }
+            _me.sendToOther(anotherUserId);
+
+          });
+
           resolve(_me.convertMessage(result));
         }).catch((error)=> {
           console.log('Error', error);
@@ -265,7 +284,6 @@ export class Conversations {
 
   initPush() {
     let push = this.push;
-    console.log('INIT PUSH!!!')
     push.hasPermission().then((res: any) => {
       if (res.isEnabled) {
         console.log('We have permission to send push notifications');
@@ -288,7 +306,6 @@ export class Conversations {
         this.deviceID = skygear.push.deviceID;
         this.deviceToken = registration.registrationId;
 
-        // TODO: ios or android?
         if(this.platform.is('ios')) {
           skygear.push.registerDevice(this.deviceToken, 'ios', 'io.skygear.ionic3chat');
         } else if(this.platform.is('android')) {
