@@ -16,7 +16,6 @@ export class HomePage {
     public modalCtrl: ModalController,
     private conversations: Conversations,
     private app: App) {
-    conversations.initPush();
     this.loadConversations();
   }
 

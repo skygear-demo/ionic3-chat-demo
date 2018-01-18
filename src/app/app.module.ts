@@ -18,6 +18,8 @@ import { SkygearService } from './skygear.service';
 import { User, Conversations, Products } from '../providers/providers';
 import { ImagePicker } from '@ionic-native/image-picker';
 import { Push } from '@ionic-native/push';
+import { LocalNotifications } from '@ionic-native/local-notifications';
+
 
 @NgModule({
   declarations: [
@@ -54,7 +56,8 @@ import { Push } from '@ionic-native/push';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     SkygearService,
     ImagePicker,
-    Push
+    Push,
+    LocalNotifications
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

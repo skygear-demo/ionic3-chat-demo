@@ -10,7 +10,7 @@ import {
   SkygearService, SkygearConversation
 } from '../../app/skygear.service';
 
-
+import { LocalNotifications } from '@ionic-native/local-notifications';
 import { Push, PushObject, PushOptions } from '@ionic-native/push';
 
 @Injectable()
@@ -20,7 +20,6 @@ export class Conversations {
   deviceID = null;
   deviceToken = null;
   targetDevice = null;
-  notificationPayload = null;
 
   options: PushOptions = {
     android: {senderID: '86251008073'}, // Obtained from FCM console.
@@ -36,8 +35,9 @@ export class Conversations {
     private skygearService: SkygearService,
     private push: Push,
     private user: User,
-    public platform: Platform) {
-      this.initPush();
+    public platform: Platform,
+    private localNotifications: LocalNotifications) {
+    this.initPush();
   }
 
   /* Conversations */
@@ -189,13 +189,9 @@ export class Conversations {
           file
         ).then(function (result) {
           console.log('Save success', result);
-          
           // Send a push to another user in the chat!
-          this.user.getCurrentUser().then(user => {
+          _me.user.getCurrentUser().then(user => {
             var userId = user["_id"];
-
-            console.log("userId", userId);
-            console.log("conversation.participant_ids", conversation.participant_ids);
 
             // Assume only one user
             var anotherUserId;
@@ -206,7 +202,14 @@ export class Conversations {
                 anotherUserId = participantId;
               }
             }
-            _me.sendToOther(anotherUserId);
+
+            _me.user.getUserProfile(userId).then(user=> {
+              _me.sendToOther(anotherUserId, "New message from "+user['username'], message);
+              
+            }).catch(error=> {
+              console.error(error);
+              reject(error);
+            });
 
           });
 
@@ -297,7 +300,8 @@ export class Conversations {
 
     pushObject.on('notification').subscribe((notification: any) => {
       console.log('Received a notification', notification);
-      this.notificationPayload = notification.message;
+
+      this.scheduleLocalPush(notification.message);
     });
 
     pushObject.on('registration').subscribe((registration: any) => {
@@ -318,8 +322,21 @@ export class Conversations {
       console.error('Error with Push plugin', error);
     });
 
+    this.localNotifications.on('click', function (notification, eopts) { 
+      console.log('Click to open');
+      console.log(notification);
+      // Handle notification Here
+    });
+
   }
 
+  scheduleLocalPush(text) {
+    this.localNotifications.schedule({
+      id: 1,
+      text: 'text',
+      sound: this.platform.is('android')? 'file://sound.mp3': 'file://beep.caf'
+    });
+  }
 
   unregisterPush() {
     this.skygearService.getSkygear().then((skygear) => {
@@ -327,40 +344,8 @@ export class Conversations {
     });
   }
 
-
-  sendToThis() {
-    console.log('Trying to this device');
-    const title = 'Title';
-    const message = 'HI';
-    this.skygearService.getSkygear().then((skygear) => {
-      console.log('skygear.push.deviceID:'+skygear.push.deviceID);
-      skygear.push.sendToDevice([skygear.push.deviceID],
-        {
-          'apns': {
-            'aps': {
-              'alert': {
-                'title': title,
-                'body': message,
-              }
-            },
-            'from': 'skygear',
-            'operation': 'notification',
-          },
-          'gcm': {
-            'notification': {
-              'title': title,
-              'body': message,
-            }
-          },
-        }
-       );
-    });
-  }
-
-  sendToOther(targetUser) {
-    console.log('Trying to device', targetUser);
-    const title = 'Title';
-    const message = 'Hi';
+  sendToOther(targetUser, title, message) {
+    console.log('Trying to user', targetUser);
     this.skygearService.getSkygear().then((skygear) => {
       skygear.push.sendToUser([targetUser],
         {
@@ -380,7 +365,8 @@ export class Conversations {
               'body': message,
             }
           },
-        }
+        },
+        'io.skygear.ionic3chat'
        );
     });
   }

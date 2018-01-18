@@ -21,7 +21,6 @@ export class TabsPage {
   constructor(public navCtrl: NavController,
    private user: User,
    private conversations: Conversations) {
-
   }
 
   ionViewWillEnter() {

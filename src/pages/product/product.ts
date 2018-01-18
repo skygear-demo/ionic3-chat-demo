@@ -22,6 +22,7 @@ export class ProductPage {
   }
 
   ionViewDidLoad() {
+    this.conversations.initPush();
     this.products.getProducts().then(results => {
       this.productList = results;
     })

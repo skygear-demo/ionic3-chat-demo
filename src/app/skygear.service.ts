@@ -5,6 +5,7 @@ import skygearchat from 'skygear-chat';
 @Injectable()
 export class SkygearService {
   isConfigurated = false;
+  currentUser;
   
   configSkygear() {
     return new Promise((resolve) => {
@@ -21,6 +22,7 @@ export class SkygearService {
 
   getSkygear() {
     if (this.isConfigurated) {
+      this.currentUser = skygear.currentUser;
       return Promise.resolve(skygear);
     }
     let promise = this.configSkygear();
