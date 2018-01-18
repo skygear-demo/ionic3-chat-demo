@@ -17,6 +17,7 @@ import { SkygearService } from './skygear.service';
 
 import { User, Conversations, Products } from '../providers/providers';
 import { ImagePicker } from '@ionic-native/image-picker';
+import { Push } from '@ionic-native/push';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { ImagePicker } from '@ionic-native/image-picker';
     SplashScreen,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     SkygearService,
-    ImagePicker
+    ImagePicker,
+    Push
   ],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })

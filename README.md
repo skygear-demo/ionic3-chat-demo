@@ -35,6 +35,20 @@ ionic cordova build android
 ionic cordova run android
 ```
 
+### Push Notification 
+
+To enable Push, please set up FCM and APN in Push Settings on Skygear portal.
+
+*You will need to build on Android / iOS Device to try out Push notification feature.
+
+```
+ionic cordova run android --device
+```
+
+```
+ionic cordova run ios --device
+```
+
 ### Sample user
 
 You may login the app with the following sample users:
