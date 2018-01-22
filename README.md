@@ -39,6 +39,8 @@ ionic cordova run android
 To enable Push, please set up FCM and APN in Push Settings on Skygear portal.
 ![Set up on Skygear Portal](https://user-images.githubusercontent.com/1916493/35100014-1f536548-fc95-11e7-9102-8890eea97ec5.png)
 
+- [Learn how to set up APN for iOS Push](https://docs.skygear.io/guides/push-notifications/config/ios/)
+- [Learn how to set up FCM for Android Push](https://docs.skygear.io/guides/push-notifications/config/android/)
 
 *You will need to build on Android / iOS Device to try out Push notification feature.
 
