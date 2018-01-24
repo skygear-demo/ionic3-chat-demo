@@ -8,7 +8,7 @@ import { File } from "@ionic-native/file";
 import { PhotoViewer } from "@ionic-native/photo-viewer";
 import { Platform } from "ionic-angular";
 import { Media } from "@ionic-native/media";
-
+import { LoadingController } from 'ionic-angular';
 
 
 @Component({
@@ -47,7 +47,8 @@ export class ChatroomPage {
     private platform: Platform,
     private media: Media,
     private file: File,
-    private zone: NgZone
+    private zone: NgZone,
+    private loadingCtrl: LoadingController
     ) {
       this.conversation = navParams.get("conversation");
       this.productContext = navParams.get("product");
@@ -140,6 +141,14 @@ export class ChatroomPage {
     image.src = base64String;
   }
 
+  showLoading() {
+    const loader = this.loadingCtrl.create({
+      content: "Uploading...",
+      duration: 3000
+    });
+    loader.present();
+  }
+
   sendAttachment() {
     this.imagePicker.getPictures({}).then((results) => {
       this.resizeImage(results[0], 1600.0, (newImage, newWidth, newHeight) => {
@@ -151,6 +160,7 @@ export class ChatroomPage {
                 contentType: "image/png"
               });
           const meta = {"thumbnail": thumbnail, "width": thumbnailWidth, "height": thumbnailHeight};
+          this.showLoading();
           this.conversations.addMessageInConversation(this.conversation.skygearRecord, "", meta, skyAsset).catch(e => console.log(e));
         });
       });
@@ -236,6 +246,7 @@ export class ChatroomPage {
     this.file.readAsDataURL(this.getAudioDirectory(), this.getAudioFileName()).then((base64File) => {
       base64File = base64File.replace(/^data:audio\/(x-m4a|mpeg);base64,/, "");
       const skyAsset = new skygear.Asset({contentType: this.getMIME(), base64: base64File, name: this.getAudioFileName()});
+      this.showLoading();
       this.conversations.addMessageInConversation(this.conversation.skygearRecord, "", meta, skyAsset).catch(e => console.log(e));
     });
   }
