@@ -28,6 +28,7 @@ export class ChatroomPage {
   audioRecordingEndTime;
   audioFilePlaying;
   audioFilePlayingURL = "";
+  loader;
 
   //You may also store the user object here for easier info access
   userId: string;
@@ -142,11 +143,17 @@ export class ChatroomPage {
   }
 
   showLoading() {
-    const loader = this.loadingCtrl.create({
-      content: "Uploading...",
-      duration: 3000
+    this.hideLoading();
+    this.loader = this.loadingCtrl.create({
+      content: "Uploading..."
     });
-    loader.present();
+    this.loader.present();
+  }
+
+  hideLoading() {
+    if (this.loader) {
+      this.loader.dismiss();
+    }
   }
 
   sendAttachment() {
@@ -161,7 +168,12 @@ export class ChatroomPage {
               });
           const meta = {"thumbnail": thumbnail, "width": thumbnailWidth, "height": thumbnailHeight};
           this.showLoading();
-          this.conversations.addMessageInConversation(this.conversation.skygearRecord, "", meta, skyAsset).catch(e => console.log(e));
+          this.conversations.addMessageInConversation(this.conversation.skygearRecord, "", meta, skyAsset)
+          .catch(e => {
+            this.hideLoading();
+            console.log(e);
+          })
+          .then(()=> this.hideLoading());
         });
       });
     }).catch(e => console.log(e));
@@ -247,7 +259,12 @@ export class ChatroomPage {
       base64File = base64File.replace(/^data:audio\/(x-m4a|mpeg);base64,/, "");
       const skyAsset = new skygear.Asset({contentType: this.getMIME(), base64: base64File, name: this.getAudioFileName()});
       this.showLoading();
-      this.conversations.addMessageInConversation(this.conversation.skygearRecord, "", meta, skyAsset).catch(e => console.log(e));
+      this.conversations.addMessageInConversation(this.conversation.skygearRecord, "", meta, skyAsset)
+      .catch(e => {
+        this.hideLoading();
+        console.log(e);
+       })
+      .then(()=> this.hideLoading());
     });
   }
 
